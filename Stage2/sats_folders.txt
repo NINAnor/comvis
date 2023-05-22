@@ -1,0 +1,4 @@
+/data/Prosjekter3/823001_17_metodesats_analyse_23_04_jepsen/Megadetector_caseA/
+/data/Prosjekter3/823001_17_metodesats_analyse_23_04_jepsen/Megadetector_caseB/
+/data/Prosjekter3/823001_17_metodesats_analyse_23_04_jepsen/Megadetector_caseC/
+/data/Prosjekter3/823001_17_metodesats_analyse_23_04_jepsen/Megadetector_caseD/

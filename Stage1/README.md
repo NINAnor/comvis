@@ -1,0 +1,3 @@
+# Stage  1:  Image  quality  filtering
+
+All  camera-based  monitoring  designs  must  handle  a  certain  proportion  of images of such low quality that further processing is impossible because the target object would not be visible even if it was within the camera frame. Unusable images need to be removed from the image sample prior to processing and this is currently a manual, time-consuming process. 
