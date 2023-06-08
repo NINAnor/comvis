@@ -56,4 +56,5 @@ if __name__ == "__main__":
                                              "recall_mo": recall_mo, # Recall < 0.5 means more detected < objects than detected = objects
                                              "F1score_mo": F1score_mo}, index=[0])])
         
+    print(df_result)
     df_result.to_csv("md_scores.csv")
