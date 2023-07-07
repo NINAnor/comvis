@@ -1,4 +1,4 @@
-# ComVis: ComVis: a cost-effective end-to-end pipeline for processing camera trap pictures at NINA
+# ComVis: a cost-effective end-to-end pipeline for processing camera trap pictures at NINA
 
 ## Project ambition
 
@@ -22,6 +22,12 @@ model (MegaDetector) and customized classifiers trained on data from NINAs monit
 ## Implementation
 
 The project is organised in four consecutive stages, where stages 1-3 are focused on methodological developments and stage 4 on documentation and reproducibility of the developments.
+
+:warning: First of all, make sure to create the `Docker` image necessary to run the scripts:
+
+```
+docker build -t comvis -f Dockerfile .
+```
 
 ### Stage 1: Image quality filtering
 ---
