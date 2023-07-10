@@ -1,14 +1,19 @@
+#!/bin/bash
 
+set -euo pipefail
 
+CROPS_FOLDER="$1"
+LABEL_STUDIO_FILE="$2"
 
-# FROM https://github.com/agentmorris/MegaDetector/tree/main/classification
+exec docker run \
+    --rm \
+    --gpus all \
+    -v "$CROPS_FOLDER":/crops \
+    -v "$LABEL_STUDIO_FILE":/label_studio_file.csv \
+    comvis \
+    python3 Stage3_Custom_Classifier/train_classifier.py \
+        "/crops" \
+        "/label_studio_file.csv"
 
-## !! LOOK BETTER AT THE INSTRUCTIONS !!
-
-python train_classifier.py \
-    $BASE_LOGDIR \
-    /path/to/crops \
-    --model-name efficientnet-b3 --pretrained \
-    --label-weighted --weight-by-detection-conf /path/to/classifier-training/mdv4_1_isotonic_calibration.npz \
-    --epochs 50 --batch-size 160 --lr 0.0001 \
-    --logdir $BASE_LOGDIR --log-extreme-examples 3
+# /data/Prosjekter3/823001_17_metodesats_analyse_23_04_jepsen/Megadetector_caseA/crops
+# /data/Prosjekter3/823001_17_metodesats_analyse_23_04_jepsen/Megadetector_caseA/label_studio.csv
