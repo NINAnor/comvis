@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-CROPS_FOLDER="$1"
-LABEL_STUDIO_FILE="$2"
+CROPS_FOLDER=/data/Prosjekter3/823001_17_metodesats_analyse_23_04_jepsen/Megadetector_caseA/crops
+LABEL_STUDIO_FILE=/data/Prosjekter3/823001_17_metodesats_analyse_23_04_jepsen/Megadetector_caseA/label_studio.csv
 
 exec docker run \
     --rm \
@@ -12,8 +12,9 @@ exec docker run \
     -v "$LABEL_STUDIO_FILE":/label_studio_file.csv \
     comvis \
     python3 Stage3_Custom_Classifier/train_classifier.py \
+        "/label_studio_file.csv" \
         "/crops" \
-        "/label_studio_file.csv"
+        --epochs 5
 
 # /data/Prosjekter3/823001_17_metodesats_analyse_23_04_jepsen/Megadetector_caseA/crops
 # /data/Prosjekter3/823001_17_metodesats_analyse_23_04_jepsen/Megadetector_caseA/label_studio.csv
