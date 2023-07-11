@@ -28,8 +28,15 @@ RUN git clone https://github.com/agentmorris/MegaDetector.git && \
     cd /app/MegaDetector &&  \
     git checkout ce1f225098875850366d3091e8f659143522ecd1
 
+# Install other packages -> tomli get uninstalled by poetry!!
+RUN poetry add setuptools=58.2.0
+RUN pip install tomli
+RUN poetry add scikit-learn
+
 # Make a folder for my scripts
 COPY ./ /app/
+
+
 
 # Change PYTHONPATH
 ENV PYTHONPATH "$PYTHONPATH:/app/MegaDetector:/app/ai4eutils:/app/yolov5"

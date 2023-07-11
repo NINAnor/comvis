@@ -2,17 +2,6 @@
 
 ## Project ambition
 
-Camera traps are increasingly used to collect data addressing key questions in ecology and nature
-management. In an appropriate study-design, they provide a non-invasive way of collecting data to infer
-estimates of e.g. species’ distribution, abundance and phenology. Camera traps reduce observer
-effects on the target species and provide an unmatched capacity for monitoring biodiversity at spatial-
-temporal scales unachievable by human observation [5-8]. In addition, they drastically reduce the invasive
-human footprint in the wider environment, requiring limited maintenance other than deployment and
-retrieval. Sorting and labelling the large number of pictures collected by camera traps is nevertheless
-challenging.
-
-The state-of-the-art classifier MegaDetector has been successfully used to detect animals, humans and vehicles in camera trap pictures in a wide diversity of environments and can be used to create a pipeline for both discarding empty pictures and help with labelling the animals.
-
 The overall ambition of the project is to initiate a more efficient use of state-of-art machine learning tools,
 that will streamline the processing of camera-based monitoring data in NINA. We will achieve this by
 providing an end-to-end pipeline for processing of camera trap data based on a combination of an established
@@ -29,6 +18,13 @@ The project is organised in four consecutive stages, where stages 1-3 are focuse
 docker build -t comvis -f Dockerfile .
 ```
 
+Alternatively you can use the repository without `Docker`, however given the amount of dependancies it may be tricker to install the necessary requirements. If you want to use the repository without `Docker` we recommand the use of `poetry` as package manager:
+
+```bash
+pip3 install poetry
+poetry install 
+```
+
 ### Stage 1: Image quality filtering
 ---
 
@@ -39,12 +35,11 @@ docker build -t comvis -f Dockerfile .
 
 ### Stage 2: Image target filtering with MegaDetector
 
-1. Deployment of MegaDetector on a HPC
-2. A classification of the ‘usable’ sample for each case into the
+1. A detection of the ‘usable’ sample for each case into the
 four MegaDetector classes; ‘empty’, ‘animal’, ‘human’ and
 ‘vehicle’.
-3. Performance statistics of the classifier.
-4. Cropped image sections of all animal objects detected by
+2. Performance statistics of the detector.
+3. Cropped image sections of all animal objects detected by
 MegaDetector for use in Stage 3.
 
 ### Stage 3: Stage 3. Species-level annotation and identification

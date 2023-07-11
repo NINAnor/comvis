@@ -202,96 +202,7 @@ def create_dataloaders_from_labelstudio(
             num_workers=num_workers, pin_memory=True)
         
     return dataloaders, label_names
-
-    
-
-############################
-# MEGADETECTOR DATALOADERS #
-############################
-def create_dataloaders(
-        dataset_csv_path: str,
-        label_index_json_path: str,
-        splits_json_path: str,
-        cropped_images_dir: str,
-        img_size: int,
-        multilabel: bool,
-        label_weighted: bool,
-        weight_by_detection_conf: bool | str,
-        batch_size: int,
-        num_workers: int,
-        augment_train: bool
-        ) -> tuple[dict[str, torch.utils.data.DataLoader], list[str]]:
-    """
-    Args:
-        dataset_csv_path: str, path to CSV file with columns
-            ['dataset', 'location', 'label'], where label is a comma-delimited
-            list of labels
-        splits_json_path: str, path to JSON file
-        augment_train: bool, whether to shuffle/augment the training set
-
-    Returns:
-        datasets: dict, maps split to DataLoader
-        label_names: list of str, label names in order of label id
-    """
-    df, label_names, split_to_locs = load_dataset_csv(
-        dataset_csv_path, label_index_json_path, splits_json_path,
-        multilabel=multilabel, label_weighted=label_weighted,
-        weight_by_detection_conf=weight_by_detection_conf)
-
-    # define the transforms
-    normalize = tv.transforms.Normalize(mean=MEANS, std=STDS, inplace=True)
-    train_transform = tv.transforms.Compose([
-        tv.transforms.RandomResizedCrop(img_size),
-        tv.transforms.RandomRotation(degrees=(-90, 90)),
-        tv.transforms.RandomHorizontalFlip(p=0.5),
-        tv.transforms.RandomVerticalFlip(p=0.1),
-        tv.transforms.RandomGrayscale(p=0.1),
-        tv.transforms.ColorJitter(brightness=.25, contrast=.25, saturation=.25),
-        tv.transforms.ToTensor(),
-        normalize
-    ])
-    test_transform = tv.transforms.Compose([
-        # resizes smaller edge to img_size
-        tv.transforms.Resize(img_size, interpolation=PIL.Image.BICUBIC),
-        tv.transforms.CenterCrop(img_size),
-        tv.transforms.ToTensor(),
-        normalize
-    ])
-
-    dataloaders = {}
-    for split, locs in split_to_locs.items():
-        is_train = (split == 'train') and augment_train
-        split_df = df[df['dataset_location'].isin(locs)]
-
-        sampler: torch.utils.data.Sampler | None = None
-        weights = None
-        if label_weighted or weight_by_detection_conf:
-            # weights sums to:
-            # - if weight_by_detection_conf: (# images in split - conf delta)
-            # - otherwise: # images in split
-            weights = split_df['weights'].to_numpy()
-            if not weight_by_detection_conf:
-                assert np.isclose(weights.sum(), len(split_df))
-            if is_train:
-                sampler = torch.utils.data.WeightedRandomSampler(
-                    weights, num_samples=len(split_df), replacement=True)
-        elif is_train:
-            # for normal (non-weighted) shuffling
-            sampler = torch.utils.data.SubsetRandomSampler(range(len(split_df)))
-
-        dataset = SimpleDataset(
-            img_files=split_df['path'].tolist(),
-            labels=split_df['label_index'].tolist(),
-            sample_weights=weights,
-            img_base_dir=cropped_images_dir,
-            transform=train_transform if is_train else test_transform)
-        assert len(dataset) > 0
-        dataloaders[split] = torch.utils.data.DataLoader(
-            dataset, batch_size=batch_size, sampler=sampler,
-            num_workers=num_workers, pin_memory=True)
-
-    return dataloaders, label_names
-#################################################################
+ 
 
 def set_finetune(model: torch.nn.Module, model_name: str, finetune: bool
                  ) -> None:
@@ -421,8 +332,8 @@ def main(dataset_dir: str,
 
     # create logdir and save params
     params = dict(locals())  # make a copy
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')  # '20200722_110816'
-    logdir = os.path.join(logdir, timestamp)
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    logdir = "./logs" #os.path.join(logdir, timestamp)
     os.makedirs(logdir, exist_ok=True)
     print('Created logdir:', logdir)
     params_json_path = os.path.join(logdir, 'params.json')
@@ -436,18 +347,6 @@ def main(dataset_dir: str,
 
     # create dataloaders and log the index_to_label mapping
     print('Creating dataloaders')
-    #loaders, label_names = create_dataloaders(
-    #    dataset_csv_path=os.path.join(dataset_dir, 'classification_ds.csv'),
-    #    label_index_json_path=os.path.join(dataset_dir, 'label_index.json'),
-    #    splits_json_path=os.path.join(dataset_dir, 'splits.json'),
-    #    cropped_images_dir=cropped_images_dir,
-    #    img_size=img_size,
-    #    multilabel=multilabel,
-    #    label_weighted=label_weighted,
-    #    weight_by_detection_conf=weight_by_detection_conf,
-    #    batch_size=batch_size,
-    #    num_workers=num_workers,
-    #    augment_train=True)
 
     loaders, label_names = create_dataloaders_from_labelstudio(
                 cropped_images_dir=cropped_images_dir,
@@ -559,10 +458,17 @@ def main(dataset_dir: str,
 
     # do a complete evaluation run
     best_epoch = best_epoch_metrics['epoch']
-    evaluate_model.main(
-        params_json_path=params_json_path,
-        ckpt_path=os.path.join(logdir, f'ckpt_{best_epoch}.pt'),
-        output_dir=logdir, splits=evaluate_model.SPLITS)
+
+    #########
+    # TO DO #
+    #########
+
+    # Compatibility issue between evaluate_model and label studio design!
+
+    #evaluate_model.main(
+    #    params_json_path=params_json_path,
+    #    ckpt_path=os.path.join(logdir, f'ckpt_{best_epoch}.pt'),
+    #    output_dir=logdir, splits=evaluate_model.SPLITS)
 
 
 def log_run(split: str, epoch: int, writer: tensorboard.SummaryWriter,
@@ -717,7 +623,7 @@ def run_epoch(model: torch.nn.Module,
               loader: torch.utils.data.DataLoader,
               weighted: bool,
               device: torch.device,
-              top: Sequence[int] = (1, 3),
+              top: Sequence[int] = (1, 2), # 3 to have a top 3 of classifications
               loss_fn: torch.nn.Module | None = None,
               finetune: bool = False,
               optimizer: torch.optim.Optimizer | None = None,

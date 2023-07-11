@@ -1,12 +1,16 @@
+#!/bin/bash
 
+set -euo pipefail
 
+MODEL_PATH=
+CROPS_TO_PREDICT=
 
-# FROM https://github.com/agentmorris/MegaDetector/tree/main/classification
-
-## !! LOOK BETTER AT THE INSTRUCTIONS !!
-
-python run_classifier.py \
-    detections.json \
-    /path/to/crops \
-    /path/to/model.pt \
-    --image-size 224
+exec docker run \
+    --rm \
+    --gpus all \
+    -v "$MODEL_PATH":/model.pt \
+    -v "$CROPS_TO_PREDICT":/crops \
+    comvis \
+    python3 classification/run_classifier.py \
+        model.pt \
+        crops
