@@ -4,11 +4,9 @@ MegaDetector detects animals on pictures and does not classify into taxa. In mos
 
 ## Set up a LabelStudio project for labeling
 
-[LabelStudio] is an open source software for labelling all sort of data for training **machine learning algorithms**
+Please refer to the [instructions on how to set up a LabelStudio projects].
 
-When the detections have been cropped out it is necessary to label them to train a custom classifier model.
-
-Export the labelstudio file as a `.csv` file
+Note that to be able to train a custom classifier, the scripts assume that the exported labelstudio results are exported as a `.csv` file
 
 ## Train the custom classifier
 

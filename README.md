@@ -15,6 +15,7 @@ The project is organised in four consecutive stages, where stages 1-3 are focuse
 :warning: First of all, make sure to create the `Docker` image necessary to run the scripts:
 
 ```
+git clone https://github.com/NINAnor/comvis.git
 docker build -t comvis -f Dockerfile .
 ```
 

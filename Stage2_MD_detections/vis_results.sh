@@ -14,4 +14,5 @@ exec docker run \
     python3 MegaDetector/md_visualization/visualize_detector_output.py \
         "/data/detections.json" \
         "/data/PICS_WITH_BB" \
-        -i "/data"
+        -i "/data" \
+        -c 0.5

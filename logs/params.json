@@ -1,0 +1,19 @@
+{
+ "dataset_dir": "/label_studio_file.csv",
+ "cropped_images_dir": "/crops",
+ "label_correspondance_file_path": "/label_correspondance",
+ "multilabel": false,
+ "model_name": "efficientnet-b0",
+ "pretrained": true,
+ "finetune": 0,
+ "label_weighted": false,
+ "weight_by_detection_conf": false,
+ "epochs": 5,
+ "batch_size": 256,
+ "lr": 0.016,
+ "weight_decay": 1e-05,
+ "num_workers": 8,
+ "logdir": ".",
+ "log_extreme_examples": 0,
+ "seed": 4275
+}

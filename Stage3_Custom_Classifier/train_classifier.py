@@ -115,7 +115,8 @@ class SimpleDataset(torch.utils.data.Dataset):
 
 def make_dataframe(
     image_dir: str,
-    label_studio_file_path: str
+    label_studio_file_path: str,
+    label_correspondance_file_path: str
     ): 
 
     import glob
@@ -142,6 +143,10 @@ def make_dataframe(
     unique_labels = df['choice'].unique()
     label_encoder = {label: idx for idx, label in enumerate(unique_labels)}
 
+    label_correspondance_path=os.path.join(label_correspondance_file_path, "label_correspondance.json")
+    with open(label_correspondance_path, "w") as outfile:
+        json.dump(label_encoder, outfile)
+
     # Transform the labels column
     df['label_encoded'] = df['choice'].map(label_encoder)
 
@@ -151,12 +156,13 @@ def make_dataframe(
 def create_dataloaders_from_labelstudio(
         cropped_images_dir: str,
         labelstudio_file_path: str,
+        label_correspondance_file_path: str,
         img_size: int,
         batch_size: int,
         num_workers: int
         ):
     
-    df, label_names = make_dataframe(cropped_images_dir, labelstudio_file_path)
+    df, label_names = make_dataframe(cropped_images_dir, labelstudio_file_path, label_correspondance_file_path)
 
     # define the transforms
     normalize = tv.transforms.Normalize(mean=MEANS, std=STDS, inplace=True)
@@ -187,7 +193,6 @@ def create_dataloaders_from_labelstudio(
         weights = None
 
         is_train = True if item == "train" else "test"
-        print(is_train)
 
         dataset = SimpleDataset(
             img_files=df_item["imgs"].tolist(),
@@ -301,6 +306,7 @@ def prep_device(model: torch.nn.Module, device_id: int | None = None
 
 def main(dataset_dir: str,
          cropped_images_dir: str,
+         label_correspondance_file_path: str, 
          multilabel: bool,
          model_name: str,
          pretrained: bool | str,
@@ -351,6 +357,7 @@ def main(dataset_dir: str,
     loaders, label_names = create_dataloaders_from_labelstudio(
                 cropped_images_dir=cropped_images_dir,
                 labelstudio_file_path=dataset_dir,
+                label_correspondance_file_path=label_correspondance_file_path,
                 img_size=img_size ,
                 batch_size=batch_size,
                 num_workers=num_workers
@@ -458,6 +465,16 @@ def main(dataset_dir: str,
 
     # do a complete evaluation run
     best_epoch = best_epoch_metrics['epoch']
+
+
+    # Save the model as a compiled model:
+    from MegaDetector.classification.evaluate_model import trace_model
+    trace_model(
+        model_name=model_name,  #"efficientnet-b0",
+        ckpt_path=os.path.join(logdir, f'ckpt_{best_epoch}.pt'),
+        num_classes=len(label_names),
+        img_size=img_size
+    )
 
     #########
     # TO DO #
@@ -756,6 +773,9 @@ def _parse_args() -> argparse.Namespace:
         'cropped_images_dir',
         help='path to local directory where image crops are saved')
     parser.add_argument(
+        '--label_correspondance',
+        help='path to the file containing the correspondance between int and label, JSON file')
+    parser.add_argument(
         '--multilabel', action='store_true',
         help='for multi-label, multi-class classification')
     parser.add_argument(
@@ -809,6 +829,7 @@ if __name__ == '__main__':
         args.lr = 0.016 * args.batch_size / 256  # based on TF models repo
     main(dataset_dir=args.dataset_dir,
          cropped_images_dir=args.cropped_images_dir,
+         label_correspondance_file_path=args.label_correspondance,
          multilabel=args.multilabel,
          model_name=args.model_name,
          pretrained=args.pretrained,
