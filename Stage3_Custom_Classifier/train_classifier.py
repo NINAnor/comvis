@@ -356,8 +356,9 @@ def main(dataset_dir: str,
     )
 
     label_correspondance_path=os.path.join(logdir, 'label_correspondance.json')
+    swapped_label_encoder= {value: key for key, value in label_encoder.items()}
     with open(label_correspondance_path, 'w') as f:
-        json.dump(label_encoder, f, indent=1)
+        json.dump(swapped_label_encoder, f, indent=1)
 
     writer = tensorboard.SummaryWriter(logdir)
 

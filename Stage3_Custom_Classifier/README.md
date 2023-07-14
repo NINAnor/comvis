@@ -24,3 +24,9 @@ The script will also produce a `label_correspondance.json` in the `logs` folder 
 
 ## Run the custom classifier on your own images
 
+Once the classifier is trained it is possible to run it on a new batch of cropped pictures using `run_classifier.sh`. The script takes 2 arguments: the path to the `compiled model` that has been created by `train_classifier.sh` and the path to the crops to be predicted. The script can be run as follow:
+
+```bash
+./run_classifier.sh /PATH∕TO/MODEL /PATH/TO/CROPS/TO/PREDICT
+```
+
