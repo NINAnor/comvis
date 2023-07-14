@@ -116,7 +116,6 @@ class SimpleDataset(torch.utils.data.Dataset):
 def make_dataframe(
     image_dir: str,
     label_studio_file_path: str,
-    label_correspondance_file_path: str
     ): 
 
     import glob
@@ -143,26 +142,21 @@ def make_dataframe(
     unique_labels = df['choice'].unique()
     label_encoder = {label: idx for idx, label in enumerate(unique_labels)}
 
-    label_correspondance_path=os.path.join(label_correspondance_file_path, "label_correspondance.json")
-    with open(label_correspondance_path, "w") as outfile:
-        json.dump(label_encoder, outfile)
-
     # Transform the labels column
     df['label_encoded'] = df['choice'].map(label_encoder)
 
     # Return the dataframe
-    return df, unique_labels
+    return df, unique_labels, label_encoder
 
 def create_dataloaders_from_labelstudio(
         cropped_images_dir: str,
         labelstudio_file_path: str,
-        label_correspondance_file_path: str,
         img_size: int,
         batch_size: int,
         num_workers: int
         ):
     
-    df, label_names = make_dataframe(cropped_images_dir, labelstudio_file_path, label_correspondance_file_path)
+    df, label_names, label_encoder = make_dataframe(cropped_images_dir, labelstudio_file_path)
 
     # define the transforms
     normalize = tv.transforms.Normalize(mean=MEANS, std=STDS, inplace=True)
@@ -206,7 +200,7 @@ def create_dataloaders_from_labelstudio(
             dataset, batch_size=batch_size, sampler=sampler,
             num_workers=num_workers, pin_memory=True)
         
-    return dataloaders, label_names
+    return dataloaders, label_names, label_encoder
  
 
 def set_finetune(model: torch.nn.Module, model_name: str, finetune: bool
@@ -306,7 +300,6 @@ def prep_device(model: torch.nn.Module, device_id: int | None = None
 
 def main(dataset_dir: str,
          cropped_images_dir: str,
-         label_correspondance_file_path: str, 
          multilabel: bool,
          model_name: str,
          pretrained: bool | str,
@@ -339,7 +332,7 @@ def main(dataset_dir: str,
     # create logdir and save params
     params = dict(locals())  # make a copy
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    logdir = "./logs" #os.path.join(logdir, timestamp)
+    logdir = "./logs" 
     os.makedirs(logdir, exist_ok=True)
     print('Created logdir:', logdir)
     params_json_path = os.path.join(logdir, 'params.json')
@@ -354,14 +347,17 @@ def main(dataset_dir: str,
     # create dataloaders and log the index_to_label mapping
     print('Creating dataloaders')
 
-    loaders, label_names = create_dataloaders_from_labelstudio(
+    loaders, label_names, label_encoder = create_dataloaders_from_labelstudio(
                 cropped_images_dir=cropped_images_dir,
                 labelstudio_file_path=dataset_dir,
-                label_correspondance_file_path=label_correspondance_file_path,
                 img_size=img_size ,
                 batch_size=batch_size,
                 num_workers=num_workers
     )
+
+    label_correspondance_path=os.path.join(logdir, 'label_correspondance.json')
+    with open(label_correspondance_path, 'w') as f:
+        json.dump(label_encoder, f, indent=1)
 
     writer = tensorboard.SummaryWriter(logdir)
 
@@ -773,9 +769,6 @@ def _parse_args() -> argparse.Namespace:
         'cropped_images_dir',
         help='path to local directory where image crops are saved')
     parser.add_argument(
-        '--label_correspondance',
-        help='path to the file containing the correspondance between int and label, JSON file')
-    parser.add_argument(
         '--multilabel', action='store_true',
         help='for multi-label, multi-class classification')
     parser.add_argument(
@@ -829,7 +822,6 @@ if __name__ == '__main__':
         args.lr = 0.016 * args.batch_size / 256  # based on TF models repo
     main(dataset_dir=args.dataset_dir,
          cropped_images_dir=args.cropped_images_dir,
-         label_correspondance_file_path=args.label_correspondance,
          multilabel=args.multilabel,
          model_name=args.model_name,
          pretrained=args.pretrained,
