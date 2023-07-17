@@ -51,4 +51,4 @@ animal objects to species for selected cases.
 
 ### Summary ComVis' workflow
 
-<p align="center"><img src="Docs/comvis-workflow.png" alt="figure" width="400"/></p>
+<p align="center"><img src="assets/comvis-workflow.png" alt="figure" width="400"/></p>
