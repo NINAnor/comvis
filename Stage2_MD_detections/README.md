@@ -6,10 +6,23 @@ Removing empty camera trap pictures and annotating the  remaining  images  with 
 
 ### Detection
 
+#### For a single path:
+
 To run `MegaDetector v.5` on the folders containing your images run `run_md.sh` as shown below. This will create a `detection.json` file containing all the detections made by `MegaDetector`.
 
 ```bash
-./run_md.sh /FOLDER/TO/ANALYSE
+./detect.sh /FOLDER/TO/ANALYSE
+```
+
+#### For multiple paths:
+
+If you want to run `MegaDetector v.5` on multiple path:
+
+- Create a `PATHS.txt` file containing all the paths that need to be processed
+- Run `detect_batch_folders.sh` in the following way:
+
+```bash
+./detect_batch_folders.sh PATHS.txt
 ```
 
 ### Cropping
@@ -17,7 +30,7 @@ To run `MegaDetector v.5` on the folders containing your images run `run_md.sh` 
 To crop the detections (i.e. isolate the picture of the animal) run `crop_detections.sh`. The script will create a subfolder `CROPS` which contains the cropped detection. The cropped detection can then be used to train a custom classifier for your dataset (refer to Stage 3).
 
 ```bash
-./crop_detecctions.sh /FOLDER/TO/ANALYSE
+./crop_detections.sh /FOLDER/TO/ANALYSE
 ```
 
 ### Visualize the detections 
