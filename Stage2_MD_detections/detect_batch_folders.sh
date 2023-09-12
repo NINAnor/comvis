@@ -6,18 +6,15 @@ set -euo pipefail
 TXT_FILE="$1"
 
 # Read the file line by line
-while read -r INPUT; do
-  # Skip empty lines
-  if [ -z "$INPUT" ]; then
-    continue
-  fi
+while read -r line
+do
 
-  echo "Processing folder: $INPUT"
+  echo "Processing folder: $line"
 
-  exec docker run \
+  docker run \
       --rm \
       --gpus all \
-      -v "$INPUT":/data \
+      -v "$line":/data \
       comvis \
       python3 MegaDetector/detection/run_detector_batch.py \
           "./megadetector/md_v5a.0.0.pt" \
