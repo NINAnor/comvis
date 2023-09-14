@@ -21,3 +21,13 @@ The figure below shows the correlation between the scores given by the participa
 ![](../../assets/probability%20for%20scores%20model1.png)
 
 We can see that the images with a very small size (i.e. containing low amount of information) are unlikely to be given a high score while images with a larger size (i.e. containing more information) are likely to be given a high score.
+
+In addition, we have run a logistic regression model (both with (glmer) and without (glm) observer ID included as a random factor). This is based on the logic that a user may often only be interested in how well the standardized image size is able to tell apart the really poor images from the rest. We developed the model using 80% of all the manual scores as training data and kept 20% for testing out-of-sample performance. In both datasets 0’s (= usable) constitute 75% and 1’s (=un-usable) 25%. The purpose of the exercise is to illustrate the trade-off between the wish to increase the TPR further towards 1 (get rid of all unusable images), without losing too many usable images from the sample (in the form of an increasing FPR)
+
+![](../../assets/ROCglmC1vssize.png)
+
+
+-	When we only try to tell apart the worst class from the rest there is no observer effect (indicated also by attached ROC curves, the glm and the glmer produce ~the same results). This is in contrast to the nominal model where the effect of including observer ID as a random factor was significant. I guess this only means that observer disagreement is not so much related to identifying the really poor images, so it is expected.
+-	There is very little gain from including any other co-variates from the Laplace (var_kx, max_kx) in addition to the standardized image size.
+-	As shown by the attached ROC curves, in the present image set, we can increase the default TPR from 0.25 to about 0.5 if we accept to lose ~10% of usable images (FPR=0.1). However, getting rid of all unusable images (TPR=1.0) cannot be done without accepting a FPR of close to 0.3
+-	Not included in the script, but it follows logically, that if we define “unusable” as the two lowest classes (“clearly unusable” and “likely unusable” all considered “unusable”), then the model does much worse, and we begin to see a bit of an observer effect as well. 
