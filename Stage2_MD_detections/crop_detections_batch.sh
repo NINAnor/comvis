@@ -22,7 +22,7 @@ do
             /data/detections.json \
             /data/crops \
             --images-dir /data \
-            --threshold 0.8 \
+            --threshold 0.2 \
             --save-full-images --square-crops
 
 done < "$TXT_FILE"

@@ -125,6 +125,14 @@ def make_dataframe(
     crops = glob.glob(image_dir + "**/*.jpg", recursive=True)
     df = pd.read_csv(label_studio_file_path)
 
+    ### CUSTOM CODE ###
+    r = df["choice"].value_counts()['Reindeer']
+    m = df["choice"].value_counts()['Moose']
+    o = df["choice"].value_counts()['Other']
+    print(f"Number of reindeer pics is {r}")
+    print(f"Number of moose pics is {m}")
+    print(f"Number of other pics is {o}")
+
     # Create a df
     df["imgs"] = crops
 

@@ -18,7 +18,13 @@ To run `MegaDetector v.5` on the folders containing your images run `run_md.sh` 
 
 If you want to run `MegaDetector v.5` on multiple path:
 
-- Create a `PATHS.txt` file containing all the paths that need to be processed
+- Create a `PATHS.txt` file containing all the paths that need to be processed. You can for instance run the following (in bash):
+
+```bash
+find $(pwd)/PATH1 -type f -name "*.jpg" > PATHS.txt
+find $(pwd)/PATH2 -type f -name "*.jpg" >> PATHS.txt
+```
+
 - Run `detect_batch_folders.sh` in the following way:
 
 ```bash
