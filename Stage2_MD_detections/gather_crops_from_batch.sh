@@ -9,5 +9,5 @@ TARGET_FOLDER="$2"
 # Read the file line by line
 while read -r line
 do
-    cp "$line/CROPS"
+    cp "$line/CROPS/*" "$TARGET_FOLDER"
 done < $TXT_FILE

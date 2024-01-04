@@ -18,13 +18,7 @@ To run `MegaDetector v.5` on the folders containing your images run `run_md.sh` 
 
 If you want to run `MegaDetector v.5` on multiple path:
 
-- Create a `PATHS.txt` file containing all the paths that need to be processed. You can for instance run the following (in bash):
-
-```bash
-find $(pwd)/PATH1 -type f -name "*.jpg" > PATHS.txt
-find $(pwd)/PATH2 -type f -name "*.jpg" >> PATHS.txt
-```
-
+- Create a `PATHS.txt` file containing all the paths to **the folders** need to be processed. 
 - Run `detect_batch_folders.sh` in the following way:
 
 ```bash
@@ -38,6 +32,16 @@ To crop the detections (i.e. isolate the picture of the animal) run `crop_detect
 ```bash
 ./crop_detections.sh /FOLDER/TO/ANALYSE
 ```
+
+Or if you have a `PATHS.txt` file listing the folders to be processed run:
+
+```bash
+./crop_detections_batch.sh PATHS.txt
+```
+
+### Gather the crops in a single folder
+
+You can gather all the crops into a single folder. This is especially useful if there was many folders to be processed (each one containing a `CROPS` folder). This will allow to add a single folder to LabelStudio 
 
 ### Visualize the detections 
 
