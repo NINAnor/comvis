@@ -1,0 +1,44 @@
+{
+  "form": {
+    "introduction": {
+      "opts": {
+        "text": "Please evaluate the following images based on your ability to be able to detect or not the presence of an animal. This depends mostly on the quality of the image, if it is out of focus, if the lens is partially covered, if there is good illumination or contrast, and on other conditions.\n\nAre you able to say if there is any animal or not and which one, given the kind of image that you see?\nThe rating system goes from 1 to 5."
+      },
+      "type": "md"
+    },
+    "scores": {
+      "opts": {
+        "items": [
+        ],
+        "values": [
+          {
+            "uid": "1",
+            "v": "1"
+          },
+          {
+            "uid": "2",
+            "v": "2"
+          },
+          {
+            "uid": "3",
+            "v": "3"
+          },
+          {
+            "uid": "4",
+            "v": "4"
+          },
+          {
+            "uid": "5",
+            "v": "5"
+          }
+        ]
+      },
+      "type": "multiradio"
+    }
+  },
+  "order": [
+    "introduction",
+    "scores"
+  ],
+  "version": 1
+}

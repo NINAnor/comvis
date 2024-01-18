@@ -1,0 +1,3 @@
+[submodule "Stage1_QualityFilter/BlurDetection2"]
+	path = Stage1_QualityFilter/BlurDetection2
+	url = git@github.com:NINAnor/BlurDetection2.git
