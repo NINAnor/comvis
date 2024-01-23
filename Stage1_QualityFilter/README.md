@@ -4,7 +4,7 @@ All camera-based monitoring designs must handle a certain proportion of images o
 
 ## Estimating image quality using the variation of the Laplacian
 
-It has been tried to figuring out automatically which images should be excluded. The most promising method is to detect the blur, by computing the Laplacian of the image with different kernel sizes, which highlights the regions of the image where there are rapid intensity change, and estimate the variance of such resulting matrix: the assumption is that low variance is often linked to a blurred or low quality image.
+It has been tried to figuring out automatically which images should be excluded. The most promising method is to detect the blur, by computing the Laplacian of the image with different kernel sizes, which highlights the regions of the image where there are rapid intensity change, and estimate the variance of such resulting matrix: the assumption is that low variance is often linked to a blurred or low quality image. In order to have comparable results, images are scaled to the same resolution (1024 pixels is used as image width by `evaluering.sh` for landscape-orented images).
 
 In order to confirm such assumption, a form is automatically generated so that humans can score the images, and the result can be compared with the previously computed values.
 
